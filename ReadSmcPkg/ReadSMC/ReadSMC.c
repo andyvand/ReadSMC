@@ -141,7 +141,7 @@ ShellAppMain (
 
     SMCKD = AllocateZeroPool(SMCKL);
 
-    Status = SMCP->ReadData(SMCKD, SMCKID, SMCKL, SMCKD);
+    Status = SMCP->ReadData(SMCP, SMCKID, SMCKL, SMCKD);
 
     if (EFI_ERROR(Status))
     {
