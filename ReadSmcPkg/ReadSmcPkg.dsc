@@ -27,7 +27,7 @@
 [LibraryClasses]
   BaseLib|MdePkg/Library/BaseLib/BaseLib.inf
   PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
-  ShellCEntryLib|ReadSmcPkg/Library/UefiShellCEntryLib/UefiShellCEntryLib.inf
+  ShellCEntryLib|ShellPkg/Library/UefiShellCEntryLib/UefiShellCEntryLib.inf
   UefiApplicationEntryPoint|MdePkg/Library/UefiApplicationEntryPoint/UefiApplicationEntryPoint.inf
   UefiBootServicesTableLib|MdePkg/Library/UefiBootServicesTableLib/UefiBootServicesTableLib.inf
   UefiRuntimeServicesTableLib|MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf

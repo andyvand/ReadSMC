@@ -17,7 +17,6 @@
 #include <Library/BaseLib.h>
 #include <Library/UefiLib.h>
 #include <Library/DebugLib.h>
-#include <Library/ShellCEntryLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include "AppleSMC.h"
