@@ -17,7 +17,6 @@
 #include <Library/BaseLib.h>
 #include <Library/UefiLib.h>
 #include <Library/DebugLib.h>
-#include <Library/ShellCEntryLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include "AppleSMC.h"
@@ -106,7 +105,8 @@ ShellAppMain (
     EFI_STATUS Status;
     EFI_GUID SMCGUID = APPLE_SMC_PROTOCOL_GUID;
     APPLE_SMC_PROTOCOL *SMCP;
-    CHAR8 *SMCK;
+    CHAR8 *SMCK = AllocateZeroPool(6);
+    CHAR8 *SMCKR = AllocateZeroPool(6);
     UINT32 SMCKID;
     UINT32 SMCKL;
     UINT32 SMCKLP;
@@ -119,9 +119,17 @@ ShellAppMain (
         return 1;
     }
 
-    SMCK = Utf8FromUnicode(Argv[1], StrLen(Argv[1]));
+    SMCKR = Utf8FromUnicode(Argv[1], StrLen(Argv[1]));
+    
+    //Reverse string because UEFI integers are little-endian
+    //Not doing this would cause SMCKID to be backwards
+    int j = 0;
+    for(int i = (AsciiStrLen(SMCKR) - 1); i >= 0; i--) {
+        SMCK[j] = SMCKR[i];
+        j += 1;
+    }
     SMCKID = *(UINT32 *)SMCK;
-
+    FreePool(SMCKR);
     SMCKL = (UINT32)StrDecimalToUint64(Argv[2]);
 
     Status = gBS->LocateProtocol (
@@ -137,11 +145,11 @@ ShellAppMain (
         return -1;
     }
 
-    Print(L"Signature: 0x%llx", SMCP->Signature);
+    Print(L"Signature: 0x%llx\n", SMCP->Signature);
 
     SMCKD = AllocateZeroPool(SMCKL);
 
-    Status = SMCP->ReadData(SMCKD, SMCKID, SMCKL, SMCKD);
+    Status = SMCP->ReadData(SMCP, SMCKID, SMCKL, SMCKD);
 
     if (EFI_ERROR(Status))
     {
@@ -155,12 +163,16 @@ ShellAppMain (
     SMCKLP = 0;
     while (SMCKLP < SMCKL)
     {
-        Print(L"%.2X ", SMCKD);
+        Print(L"%.2X ", *SMCKD);
 
         ++SMCKLP;
+        ++SMCKD;
     }
 
     Print(L"]\n");
+    
+    FreePool(SMCKD);
+    FreePool(SMCK);
     
     return 0;
 }
